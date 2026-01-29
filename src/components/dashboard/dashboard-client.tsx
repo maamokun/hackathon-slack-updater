@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusIcon, CalendarIcon } from "lucide-react";
+import { PlusIcon, CalendarIcon, Settings } from "lucide-react";
 import { ScheduleForm } from "@/components/schedules/schedule-form";
 import { ScheduleList } from "@/components/schedules/schedule-list";
 import { getSchedules } from "@/actions/schedules";
@@ -142,6 +142,15 @@ export function DashboardClient({ user, organizations, clockStatus }: DashboardC
                   ))}
                 </SelectContent>
               </Select>
+
+              {selectedOrg?.role === "owner" && (
+                <Button variant="outline" asChild>
+                  <a href={`/dashboard/${selectedOrgId}/settings`}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </a>
+                </Button>
+              )}
 
               <Button variant="outline" asChild>
                 <a href="/api/slack/install">

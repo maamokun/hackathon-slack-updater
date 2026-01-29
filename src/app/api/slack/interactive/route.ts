@@ -33,7 +33,7 @@ interface SlackInteractivePayload {
 function verifySlackRequest(
   body: string,
   timestamp: string,
-  signature: string
+  signature: string,
 ): boolean {
   // Reject old requests (older than 5 minutes)
   const requestTime = parseInt(timestamp, 10);
@@ -52,7 +52,7 @@ function verifySlackRequest(
   try {
     return timingSafeEqual(
       Buffer.from(computedSignature),
-      Buffer.from(signature)
+      Buffer.from(signature),
     );
   } catch {
     return false;
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     if (!timestamp || !signature) {
       return NextResponse.json(
         { text: "Missing Slack signature headers" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
           });
 
           console.log(
-            `[Interactive] User ${payload.user.id} opted out of invites for org ${organizationId}`
+            `[Interactive] User ${payload.user.id} opted out of invites for org ${organizationId}`,
           );
 
           // Update the message to confirm
@@ -137,9 +137,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[Interactive] Error processing interaction:", error);
-    return NextResponse.json(
-      { text: "An error occurred" },
-      { status: 500 }
-    );
+    return NextResponse.json({ text: "An error occurred" }, { status: 500 });
   }
 }

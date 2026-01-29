@@ -43,13 +43,13 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     return NextResponse.redirect(
-      `${request.nextUrl.origin}/dashboard?error=${encodeURIComponent(error)}`
+      `${request.nextUrl.origin}/dashboard?error=${encodeURIComponent(error)}`,
     );
   }
 
   if (!code) {
     return NextResponse.redirect(
-      `${request.nextUrl.origin}/dashboard?error=no_code`
+      `${request.nextUrl.origin}/dashboard?error=no_code`,
     );
   }
 
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
 
   if (!session?.user) {
     return NextResponse.redirect(
-      `${request.nextUrl.origin}/sign-in?error=not_authenticated`
+      `${request.nextUrl.origin}/sign-in?error=not_authenticated`,
     );
   }
 
@@ -129,7 +129,9 @@ export async function GET(request: NextRequest) {
             userId: session.user.id,
             slackUserId: data.authed_user.id,
             userAccessToken: encryptToken(data.authed_user.access_token),
-            userRefreshToken: encryptToken(data.authed_user.refresh_token || ""),
+            userRefreshToken: encryptToken(
+              data.authed_user.refresh_token || "",
+            ),
             userTokenExpiresAt: userExpiresAt,
             role: "member",
           },
@@ -140,14 +142,16 @@ export async function GET(request: NextRequest) {
           where: { id: existingMember.id },
           data: {
             userAccessToken: encryptToken(data.authed_user.access_token),
-            userRefreshToken: encryptToken(data.authed_user.refresh_token || ""),
+            userRefreshToken: encryptToken(
+              data.authed_user.refresh_token || "",
+            ),
             userTokenExpiresAt: userExpiresAt,
           },
         });
       }
 
       return NextResponse.redirect(
-        `${request.nextUrl.origin}/dashboard?success=reinstalled`
+        `${request.nextUrl.origin}/dashboard?success=reinstalled`,
       );
     }
 
@@ -165,7 +169,9 @@ export async function GET(request: NextRequest) {
             userId: session.user.id,
             slackUserId: data.authed_user.id,
             userAccessToken: encryptToken(data.authed_user.access_token),
-            userRefreshToken: encryptToken(data.authed_user.refresh_token || ""),
+            userRefreshToken: encryptToken(
+              data.authed_user.refresh_token || "",
+            ),
             userTokenExpiresAt: userExpiresAt,
             role: "owner",
           },
@@ -177,12 +183,12 @@ export async function GET(request: NextRequest) {
     fetchAndCacheEmojis(organization.id).catch(console.error);
 
     return NextResponse.redirect(
-      `${request.nextUrl.origin}/dashboard?success=installed&org=${organization.id}`
+      `${request.nextUrl.origin}/dashboard?success=installed&org=${organization.id}`,
     );
   } catch (error) {
     console.error("Slack installation error:", error);
     return NextResponse.redirect(
-      `${request.nextUrl.origin}/dashboard?error=installation_failed`
+      `${request.nextUrl.origin}/dashboard?error=installation_failed`,
     );
   }
 }
@@ -213,7 +219,9 @@ async function fetchAndCacheEmojis(organizationId: string) {
         },
       });
 
-      console.log(`Cached ${Object.keys(data.emoji).length} custom emojis for org ${organizationId}`);
+      console.log(
+        `Cached ${Object.keys(data.emoji).length} custom emojis for org ${organizationId}`,
+      );
     }
   } catch (error) {
     console.error("Failed to fetch custom emojis:", error);

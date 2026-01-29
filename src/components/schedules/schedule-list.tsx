@@ -29,7 +29,9 @@ export function ScheduleList({
       await deleteSchedule(scheduleId);
       onRefresh?.();
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Failed to delete schedule");
+      alert(
+        error instanceof Error ? error.message : "Failed to delete schedule",
+      );
     } finally {
       setDeletingId(null);
     }
@@ -44,7 +46,9 @@ export function ScheduleList({
       });
       onRefresh?.();
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Failed to update schedule");
+      alert(
+        error instanceof Error ? error.message : "Failed to update schedule",
+      );
     } finally {
       setTogglingId(null);
     }
@@ -95,7 +99,9 @@ export function ScheduleList({
   if (schedules.length === 0) {
     return (
       <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-        <p className="text-gray-600">No schedules yet. Create your first one!</p>
+        <p className="text-gray-600">
+          No schedules yet. Create your first one!
+        </p>
       </div>
     );
   }
@@ -106,12 +112,12 @@ export function ScheduleList({
         const localStart = utcToLocal(
           new Date(schedule.startDate),
           schedule.timeStart,
-          schedule.timezone
+          schedule.timezone,
         );
         const localEnd = utcToLocal(
           new Date(schedule.startDate),
           schedule.timeEnd,
-          schedule.timezone
+          schedule.timezone,
         );
         const status = getScheduleStatus(schedule);
 
@@ -141,7 +147,8 @@ export function ScheduleList({
                   <div>
                     <span className="font-medium">Time:</span>{" "}
                     {minutesToTimeString(localStart.minutes)} -{" "}
-                    {minutesToTimeString(localEnd.minutes)} ({schedule.timezone})
+                    {minutesToTimeString(localEnd.minutes)} ({schedule.timezone}
+                    )
                   </div>
 
                   <div>
@@ -153,7 +160,10 @@ export function ScheduleList({
 
                   <div>
                     <span className="font-medium">Recurrence:</span>{" "}
-                    {formatRecurrence(schedule.recurring, schedule.recurringDays)}
+                    {formatRecurrence(
+                      schedule.recurring,
+                      schedule.recurringDays,
+                    )}
                   </div>
                 </div>
               </div>

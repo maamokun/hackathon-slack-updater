@@ -15,7 +15,10 @@ interface SlackChatPostMessageResponse {
  * @param organizationId - The organization ID
  * @returns JWT token valid for 24 hours
  */
-function generateJoinToken(slackUserId: string, organizationId: string): string {
+function generateJoinToken(
+  slackUserId: string,
+  organizationId: string,
+): string {
   return sign(
     {
       slackUserId,
@@ -23,7 +26,7 @@ function generateJoinToken(slackUserId: string, organizationId: string): string 
       type: "join_invite",
     },
     env.TOKEN_ENCRYPTION_KEY,
-    { expiresIn: "24h" }
+    { expiresIn: "24h" },
   );
 }
 
@@ -36,7 +39,7 @@ function generateJoinToken(slackUserId: string, organizationId: string): string 
 export async function sendInviteDm(
   slackUserId: string,
   organizationId: string,
-  botToken: string
+  botToken: string,
 ): Promise<void> {
   try {
     // Check if user has opted out of DMs for this org
@@ -51,7 +54,7 @@ export async function sendInviteDm(
 
     if (optOut) {
       console.log(
-        `[DM] User ${slackUserId} has opted out of invites for org ${organizationId}`
+        `[DM] User ${slackUserId} has opted out of invites for org ${organizationId}`,
       );
       return;
     }

@@ -12,7 +12,11 @@ const AUTH_TAG_LENGTH = 16;
  */
 export function encryptToken(token: string): string {
   const iv = randomBytes(IV_LENGTH);
-  const cipher = createCipheriv(ALGORITHM, Buffer.from(env.TOKEN_ENCRYPTION_KEY, "hex"), iv);
+  const cipher = createCipheriv(
+    ALGORITHM,
+    Buffer.from(env.TOKEN_ENCRYPTION_KEY, "hex"),
+    iv,
+  );
 
   let encrypted = cipher.update(token, "utf8", "hex");
   encrypted += cipher.final("hex");
@@ -42,7 +46,7 @@ export function decryptToken(encryptedToken: string): string {
   const decipher = createDecipheriv(
     ALGORITHM,
     Buffer.from(env.TOKEN_ENCRYPTION_KEY, "hex"),
-    iv
+    iv,
   );
 
   decipher.setAuthTag(authTag);

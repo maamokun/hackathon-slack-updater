@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/db";
-import { setUserPresence, clearUserSlackStatus, updateUserSlackStatus } from "@/lib/slack-api";
+import {
+  setUserPresence,
+  clearUserSlackStatus,
+  updateUserSlackStatus,
+} from "@/lib/slack-api";
 
 /**
  * Checks if the current time (in minutes) is within a schedule's time range
@@ -8,7 +12,7 @@ import { setUserPresence, clearUserSlackStatus, updateUserSlackStatus } from "@/
 function isTimeInRange(
   currentMinutes: number,
   startMinutes: number,
-  endMinutes: number
+  endMinutes: number,
 ): boolean {
   if (startMinutes <= endMinutes) {
     // Normal range (doesn't cross midnight)
@@ -25,7 +29,7 @@ function isTimeInRange(
 function matchesRecurrencePattern(
   currentDay: number,
   recurring: string,
-  recurringDays: number[] | null
+  recurringDays: number[] | null,
 ): boolean {
   switch (recurring) {
     case "none":
@@ -90,7 +94,7 @@ async function findActiveSchedule(userId: string) {
     const isInTimeRange = isTimeInRange(
       currentMinutes,
       schedule.timeStart,
-      schedule.timeEnd
+      schedule.timeEnd,
     );
 
     if (!isInTimeRange) {
@@ -101,7 +105,7 @@ async function findActiveSchedule(userId: string) {
     const matchesRecurrence = matchesRecurrencePattern(
       currentDayOfWeek,
       schedule.recurring,
-      schedule.recurringDays as number[] | null
+      schedule.recurringDays as number[] | null,
     );
 
     if (!matchesRecurrence) {
@@ -143,7 +147,7 @@ export async function updateClockStatus(
   isClockedIn: boolean,
   method: "message" | "manual" | "slash_command",
   messageTs?: string,
-  channelId?: string
+  channelId?: string,
 ): Promise<void> {
   const now = new Date();
 
@@ -193,7 +197,7 @@ export async function updateClockStatus(
         console.warn(
           `Could not update presence for membership ${membership.id}:`,
           error instanceof Error ? error.message : "Unknown error",
-          "- User may need to reinstall app with users:write scope"
+          "- User may need to reinstall app with users:write scope",
         );
       }
 
@@ -202,7 +206,7 @@ export async function updateClockStatus(
       } catch (error) {
         console.warn(
           `Could not clear status for membership ${membership.id}:`,
-          error instanceof Error ? error.message : "Unknown error"
+          error instanceof Error ? error.message : "Unknown error",
         );
       }
     }
@@ -215,7 +219,7 @@ export async function updateClockStatus(
         console.warn(
           `Could not update presence for membership ${membership.id}:`,
           error instanceof Error ? error.message : "Unknown error",
-          "- User may need to reinstall app with users:write scope"
+          "- User may need to reinstall app with users:write scope",
         );
       }
     }
@@ -227,22 +231,22 @@ export async function updateClockStatus(
         await updateUserSlackStatus(
           activeSchedule.membershipId,
           activeSchedule.statusText,
-          activeSchedule.statusEmoji
+          activeSchedule.statusEmoji,
         );
         console.log(
-          `[ClockStatus] Applied active schedule emoji for user ${userId}`
+          `[ClockStatus] Applied active schedule emoji for user ${userId}`,
         );
       } catch (error) {
         console.warn(
           `Could not apply active schedule emoji for user ${userId}:`,
-          error instanceof Error ? error.message : "Unknown error"
+          error instanceof Error ? error.message : "Unknown error",
         );
       }
     }
   }
 
   console.log(
-    `[ClockStatus] User ${userId} ${isClockedIn ? "clocked in" : "clocked out"} via ${method}`
+    `[ClockStatus] User ${userId} ${isClockedIn ? "clocked in" : "clocked out"} via ${method}`,
   );
 }
 
@@ -252,7 +256,7 @@ export async function updateClockStatus(
  * @returns Array of user IDs who are clocked in
  */
 export async function getClockedInUsers(
-  organizationId: string
+  organizationId: string,
 ): Promise<string[]> {
   const members = await prisma.organizationMember.findMany({
     where: { organizationId },

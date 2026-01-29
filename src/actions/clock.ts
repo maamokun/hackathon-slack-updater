@@ -246,7 +246,7 @@ export async function getOrganizationChannels(organizationId: string) {
       headers: {
         Authorization: `Bearer ${botToken}`,
       },
-    }
+    },
   );
 
   const data = await response.json();

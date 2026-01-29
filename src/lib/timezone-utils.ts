@@ -8,7 +8,7 @@
 export function localToUTC(
   date: Date,
   minutes: number,
-  timezone: string
+  timezone: string,
 ): { date: Date; minutes: number } {
   // Create a date string in the user's timezone
   const year = date.getFullYear();
@@ -50,8 +50,8 @@ export function localToUTC(
       parseInt(localParts.day),
       parseInt(localParts.hour),
       parseInt(localParts.minute),
-      parseInt(localParts.second)
-    )
+      parseInt(localParts.second),
+    ),
   );
 
   // Calculate the offset
@@ -61,11 +61,12 @@ export function localToUTC(
   const correctedUTC = new Date(localDate.getTime() - offset);
 
   // Calculate UTC minutes from midnight
-  const utcMinutes = correctedUTC.getUTCHours() * 60 + correctedUTC.getUTCMinutes();
+  const utcMinutes =
+    correctedUTC.getUTCHours() * 60 + correctedUTC.getUTCMinutes();
 
   // Set the date part to midnight UTC for storage
   const storedDate = new Date(
-    Date.UTC(year, date.getMonth(), date.getDate(), 0, 0, 0, 0)
+    Date.UTC(year, date.getMonth(), date.getDate(), 0, 0, 0, 0),
   );
 
   return {
@@ -84,7 +85,7 @@ export function localToUTC(
 export function utcToLocal(
   date: Date,
   minutes: number,
-  timezone: string
+  timezone: string,
 ): { date: Date; minutes: number } {
   const utcHours = Math.floor(minutes / 60);
   const utcMinutes = minutes % 60;
@@ -98,8 +99,8 @@ export function utcToLocal(
       utcHours,
       utcMinutes,
       0,
-      0
-    )
+      0,
+    ),
   );
 
   // Convert to local timezone
@@ -124,7 +125,7 @@ export function utcToLocal(
   const localDate = new Date(
     parseInt(localParts.year),
     parseInt(localParts.month) - 1,
-    parseInt(localParts.day)
+    parseInt(localParts.day),
   );
 
   const localMinutes =

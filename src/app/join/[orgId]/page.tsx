@@ -9,7 +9,10 @@ interface JoinPageProps {
   searchParams: Promise<{ token?: string }>;
 }
 
-export default async function JoinPage({ params, searchParams }: JoinPageProps) {
+export default async function JoinPage({
+  params,
+  searchParams,
+}: JoinPageProps) {
   const { orgId } = await params;
   const { token } = await searchParams;
 
@@ -17,9 +20,12 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8 text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Invalid Invite Link</h1>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">
+            Invalid Invite Link
+          </h1>
           <p className="text-gray-600">
-            This invite link is missing required information. Please request a new invite.
+            This invite link is missing required information. Please request a
+            new invite.
           </p>
         </div>
       </div>
@@ -34,9 +40,12 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8 text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Expired or Invalid Link</h1>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">
+            Expired or Invalid Link
+          </h1>
           <p className="text-gray-600">
-            This invite link has expired or is invalid. Please request a new invite.
+            This invite link has expired or is invalid. Please request a new
+            invite.
           </p>
         </div>
       </div>
@@ -47,7 +56,9 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8 text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Invalid Invite</h1>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">
+            Invalid Invite
+          </h1>
           <p className="text-gray-600">
             This invite link is not valid. Please request a new invite.
           </p>
@@ -69,7 +80,9 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8 text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Organization Not Found</h1>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">
+            Organization Not Found
+          </h1>
           <p className="text-gray-600">
             This organization no longer exists or has been removed.
           </p>
@@ -104,7 +117,9 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
         </div>
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-          <h2 className="font-semibold text-blue-900 mb-2">What is Status Scheduler?</h2>
+          <h2 className="font-semibold text-blue-900 mb-2">
+            What is Status Scheduler?
+          </h2>
           <ul className="text-sm text-blue-800 space-y-1">
             <li>• Automatically update your Slack status based on schedules</li>
             <li>• Clock in/out with simple keywords in Slack</li>

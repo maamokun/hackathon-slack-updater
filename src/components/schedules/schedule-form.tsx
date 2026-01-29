@@ -35,10 +35,18 @@ export function ScheduleForm({
 
   // Convert UTC times to local for editing
   const initialLocalTimes = schedule
-    ? utcToLocal(new Date(schedule.startDate), schedule.timeStart, schedule.timezone)
+    ? utcToLocal(
+        new Date(schedule.startDate),
+        schedule.timeStart,
+        schedule.timezone,
+      )
     : null;
   const initialEndLocalTimes = schedule?.endDate
-    ? utcToLocal(new Date(schedule.endDate), schedule.timeEnd, schedule.timezone)
+    ? utcToLocal(
+        new Date(schedule.endDate),
+        schedule.timeEnd,
+        schedule.timezone,
+      )
     : null;
 
   const [formData, setFormData] = useState({
@@ -64,14 +72,18 @@ export function ScheduleForm({
   // Close emoji picker when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target as Node)
+      ) {
         setShowEmojiPicker(false);
       }
     };
 
     if (showEmojiPicker) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showEmojiPicker]);
 
@@ -86,9 +98,15 @@ export function ScheduleForm({
       const timeStartMinutes = timeStringToMinutes(formData.timeStart);
       const timeEndMinutes = timeStringToMinutes(formData.timeEnd);
 
-      const utcStart = localToUTC(startDateObj, timeStartMinutes, formData.timezone);
+      const utcStart = localToUTC(
+        startDateObj,
+        timeStartMinutes,
+        formData.timezone,
+      );
 
-      const endDateObj = formData.endDate ? new Date(formData.endDate) : undefined;
+      const endDateObj = formData.endDate
+        ? new Date(formData.endDate)
+        : undefined;
       const utcEnd = endDateObj
         ? localToUTC(endDateObj, timeEndMinutes, formData.timezone)
         : undefined;
@@ -99,12 +117,20 @@ export function ScheduleForm({
         startDate: utcStart.date,
         endDate: utcEnd?.date,
         timeStart: utcStart.minutes,
-        timeEnd: utcEnd ? utcEnd.minutes : localToUTC(startDateObj, timeEndMinutes, formData.timezone).minutes,
+        timeEnd: utcEnd
+          ? utcEnd.minutes
+          : localToUTC(startDateObj, timeEndMinutes, formData.timezone).minutes,
         timezone: formData.timezone,
         statusText: formData.statusText,
         statusEmoji: formData.statusEmoji,
-        recurring: formData.recurring as "none" | "daily" | "weekdays" | "weekends" | "custom",
-        recurringDays: formData.recurring === "custom" ? formData.recurringDays : undefined,
+        recurring: formData.recurring as
+          | "none"
+          | "daily"
+          | "weekdays"
+          | "weekends"
+          | "custom",
+        recurringDays:
+          formData.recurring === "custom" ? formData.recurringDays : undefined,
         requiresClockedIn: formData.requiresClockedIn,
       };
 
@@ -137,7 +163,9 @@ export function ScheduleForm({
       const result = await refreshOrganizationEmojis(organizationId);
       toast.success(`Successfully refreshed ${result.count} custom emojis!`);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to refresh emojis");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to refresh emojis",
+      );
     } finally {
       setRefreshingEmojis(false);
     }
@@ -294,7 +322,9 @@ export function ScheduleForm({
           onClick={handleRefreshEmojis}
           disabled={refreshingEmojis}
         >
-          <RefreshCwIcon className={`mr-2 h-3 w-3 ${refreshingEmojis ? 'animate-spin' : ''}`} />
+          <RefreshCwIcon
+            className={`mr-2 h-3 w-3 ${refreshingEmojis ? "animate-spin" : ""}`}
+          />
           {refreshingEmojis ? "Refreshing..." : "Refresh Custom Emojis"}
         </Button>
       </div>
@@ -312,9 +342,15 @@ export function ScheduleForm({
           >
             <span className="flex items-center gap-2">
               {formData.statusEmoji && (
-                <span className="text-xl">{formData.statusEmoji.replace(/:/g, '')}</span>
+                <span className="text-xl">
+                  {formData.statusEmoji.replace(/:/g, "")}
+                </span>
               )}
-              <span className={formData.statusEmoji ? "text-gray-700" : "text-gray-400"}>
+              <span
+                className={
+                  formData.statusEmoji ? "text-gray-700" : "text-gray-400"
+                }
+              >
                 {formData.statusEmoji || "Select an emoji"}
               </span>
             </span>
@@ -370,9 +406,7 @@ export function ScheduleForm({
       {/* Custom Days Selection */}
       {formData.recurring === "custom" && (
         <div>
-          <label className="block text-sm font-medium mb-2">
-            Select Days
-          </label>
+          <label className="block text-sm font-medium mb-2">Select Days</label>
           <div className="flex gap-2">
             {weekDays.map((day) => (
               <button
@@ -404,11 +438,16 @@ export function ScheduleForm({
           className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
         <div className="flex-1">
-          <label htmlFor="requiresClockedIn" className="text-sm font-medium cursor-pointer">
+          <label
+            htmlFor="requiresClockedIn"
+            className="text-sm font-medium cursor-pointer"
+          >
             Only activate when clocked in
           </label>
           <p className="text-xs text-gray-500 mt-1">
-            This schedule will only update your status when you're clocked in. Use clock-in keywords in your organization's monitored channel or use the /clockin slash command.
+            This schedule will only update your status when you're clocked in.
+            Use clock-in keywords in your organization's monitored channel or
+            use the /clockin slash command.
           </p>
         </div>
       </div>
@@ -430,7 +469,11 @@ export function ScheduleForm({
           disabled={loading}
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
         >
-          {loading ? "Saving..." : isEditing ? "Update Schedule" : "Create Schedule"}
+          {loading
+            ? "Saving..."
+            : isEditing
+              ? "Update Schedule"
+              : "Create Schedule"}
         </button>
       </div>
     </form>

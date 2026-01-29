@@ -16,9 +16,7 @@ interface SlackTokenRefreshResponse {
  * @param refreshToken - The current refresh token (plaintext)
  * @returns New access token, refresh token, and expiration timestamp
  */
-export async function refreshSlackToken(
-  refreshToken: string
-): Promise<{
+export async function refreshSlackToken(refreshToken: string): Promise<{
   accessToken: string;
   refreshToken: string;
   expiresAt: Date;
@@ -39,7 +37,9 @@ export async function refreshSlackToken(
   const data: SlackTokenRefreshResponse = await response.json();
 
   if (!data.ok || !data.access_token) {
-    throw new Error(`Failed to refresh Slack token: ${data.error || "Unknown error"}`);
+    throw new Error(
+      `Failed to refresh Slack token: ${data.error || "Unknown error"}`,
+    );
   }
 
   // Calculate expiration time (subtract 5 minutes for safety buffer)
@@ -57,7 +57,9 @@ export async function refreshSlackToken(
  * @param organizationId - The organization ID
  * @returns Fresh decrypted access token
  */
-export async function ensureFreshOrgToken(organizationId: string): Promise<string> {
+export async function ensureFreshOrgToken(
+  organizationId: string,
+): Promise<string> {
   const org = await prisma.organization.findUnique({
     where: { id: organizationId },
   });
@@ -78,9 +80,8 @@ export async function ensureFreshOrgToken(organizationId: string): Promise<strin
   console.log(`Refreshing bot token for organization ${organizationId}`);
 
   const currentRefreshToken = decryptToken(org.botRefreshToken);
-  const { accessToken, refreshToken, expiresAt } = await refreshSlackToken(
-    currentRefreshToken
-  );
+  const { accessToken, refreshToken, expiresAt } =
+    await refreshSlackToken(currentRefreshToken);
 
   // Encrypt and store new tokens
   await prisma.organization.update({
@@ -100,7 +101,9 @@ export async function ensureFreshOrgToken(organizationId: string): Promise<strin
  * @param membershipId - The organization member ID
  * @returns Fresh decrypted access token
  */
-export async function ensureFreshMemberToken(membershipId: string): Promise<string> {
+export async function ensureFreshMemberToken(
+  membershipId: string,
+): Promise<string> {
   const member = await prisma.organizationMember.findUnique({
     where: { id: membershipId },
   });
@@ -121,9 +124,8 @@ export async function ensureFreshMemberToken(membershipId: string): Promise<stri
   console.log(`Refreshing user token for member ${membershipId}`);
 
   const currentRefreshToken = decryptToken(member.userRefreshToken);
-  const { accessToken, refreshToken, expiresAt } = await refreshSlackToken(
-    currentRefreshToken
-  );
+  const { accessToken, refreshToken, expiresAt } =
+    await refreshSlackToken(currentRefreshToken);
 
   // Encrypt and store new tokens
   await prisma.organizationMember.update({

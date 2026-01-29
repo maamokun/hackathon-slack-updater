@@ -30,7 +30,7 @@ interface SlackEventPayload {
 function verifySlackRequest(
   body: string,
   timestamp: string,
-  signature: string
+  signature: string,
 ): boolean {
   // Reject old requests (older than 5 minutes)
   const requestTime = parseInt(timestamp, 10);
@@ -49,7 +49,7 @@ function verifySlackRequest(
   try {
     return timingSafeEqual(
       Buffer.from(computedSignature),
-      Buffer.from(signature)
+      Buffer.from(signature),
     );
   } catch {
     return false;
@@ -63,7 +63,7 @@ async function addReaction(
   accessToken: string,
   channel: string,
   timestamp: string,
-  emoji: string
+  emoji: string,
 ): Promise<void> {
   // Remove colons from emoji if present
   const emojiName = emoji.replace(/:/g, "");
@@ -92,9 +92,7 @@ async function addReaction(
  */
 function containsKeyword(text: string, keywords: string[]): boolean {
   const lowerText = text.toLowerCase();
-  return keywords.some((keyword) =>
-    lowerText.includes(keyword.toLowerCase())
-  );
+  return keywords.some((keyword) => lowerText.includes(keyword.toLowerCase()));
 }
 
 /**
@@ -110,17 +108,14 @@ export async function POST(request: NextRequest) {
     if (!timestamp || !signature) {
       return NextResponse.json(
         { error: "Missing Slack signature headers" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Verify request came from Slack
     if (!verifySlackRequest(body, timestamp, signature)) {
       console.error("[Events] Invalid Slack signature");
-      return NextResponse.json(
-        { error: "Invalid signature" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 
     // Parse payload
@@ -136,7 +131,12 @@ export async function POST(request: NextRequest) {
       const event = payload.event;
 
       // Only process channel messages
-      if (event.type === "message" && event.channel && event.user && event.text) {
+      if (
+        event.type === "message" &&
+        event.channel &&
+        event.user &&
+        event.text
+      ) {
         // Skip bot messages and threaded replies
         if (event.subtype || event.thread_ts) {
           return NextResponse.json({ ok: true });
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
           event.channel,
           event.user,
           event.text,
-          event.ts!
+          event.ts!,
         );
       }
     }
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
     console.error("[Events] Error processing event:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -170,7 +170,7 @@ async function handleMessageEvent(
   channelId: string,
   slackUserId: string,
   text: string,
-  messageTs: string
+  messageTs: string,
 ): Promise<void> {
   try {
     // Find organization by Slack team ID
@@ -229,18 +229,18 @@ async function handleMessageEvent(
         action === "clock_in",
         "message",
         messageTs,
-        channelId
+        channelId,
       );
 
       console.log(
-        `[Events] Updated clock status for member ${member.userId}: ${action}`
+        `[Events] Updated clock status for member ${member.userId}: ${action}`,
       );
     } else {
       // User is not an org member - send invite DM
       await sendInviteDm(slackUserId, org.id, botToken);
 
       console.log(
-        `[Events] Sent invite DM to non-member user ${slackUserId} in org ${org.id}`
+        `[Events] Sent invite DM to non-member user ${slackUserId} in org ${org.id}`,
       );
     }
   } catch (error) {

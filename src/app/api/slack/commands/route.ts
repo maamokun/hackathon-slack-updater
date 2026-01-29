@@ -25,7 +25,7 @@ interface SlackCommandPayload {
 function verifySlackRequest(
   body: string,
   timestamp: string,
-  signature: string
+  signature: string,
 ): boolean {
   // Reject old requests (older than 5 minutes)
   const requestTime = parseInt(timestamp, 10);
@@ -44,7 +44,7 @@ function verifySlackRequest(
   try {
     return timingSafeEqual(
       Buffer.from(computedSignature),
-      Buffer.from(signature)
+      Buffer.from(signature),
     );
   } catch {
     return false;
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     if (!timestamp || !signature) {
       return NextResponse.json(
         { text: "Missing Slack signature headers" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
         response_type: "ephemeral",
         text: "❌ An error occurred while processing your command. Please try again later.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

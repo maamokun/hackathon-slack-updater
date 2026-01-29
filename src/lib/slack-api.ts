@@ -1,4 +1,7 @@
-import { ensureFreshMemberToken, ensureFreshOrgToken } from "@/lib/slack-tokens";
+import {
+  ensureFreshMemberToken,
+  ensureFreshOrgToken,
+} from "@/lib/slack-tokens";
 import { prisma } from "@/lib/db";
 
 interface SlackProfileSetResponse {
@@ -28,7 +31,7 @@ export async function updateUserSlackStatus(
   membershipId: string,
   statusText: string,
   statusEmoji: string,
-  expirationMinutes?: number
+  expirationMinutes?: number,
 ) {
   try {
     // Get fresh token for the user
@@ -82,7 +85,7 @@ export async function clearUserSlackStatus(membershipId: string) {
  */
 export async function setUserPresence(
   membershipId: string,
-  presence: "auto" | "away"
+  presence: "auto" | "away",
 ): Promise<void> {
   try {
     const accessToken = await ensureFreshMemberToken(membershipId);
@@ -115,7 +118,7 @@ export async function setUserPresence(
  * @returns Object mapping emoji names to URLs
  */
 export async function fetchCustomEmojis(
-  organizationId: string
+  organizationId: string,
 ): Promise<Record<string, string>> {
   try {
     const accessToken = await ensureFreshOrgToken(organizationId);
@@ -129,7 +132,9 @@ export async function fetchCustomEmojis(
     const data: SlackEmojiListResponse = await response.json();
 
     if (!data.ok || !data.emoji) {
-      throw new Error(`Failed to fetch emojis: ${data.error || "Unknown error"}`);
+      throw new Error(
+        `Failed to fetch emojis: ${data.error || "Unknown error"}`,
+      );
     }
 
     // Update cache in database
@@ -142,7 +147,7 @@ export async function fetchCustomEmojis(
     });
 
     console.log(
-      `Cached ${Object.keys(data.emoji).length} custom emojis for org ${organizationId}`
+      `Cached ${Object.keys(data.emoji).length} custom emojis for org ${organizationId}`,
     );
 
     return data.emoji;
@@ -159,7 +164,7 @@ export async function fetchCustomEmojis(
  */
 export async function getCustomEmojis(
   organizationId: string,
-  maxAgeHours: number = 24
+  maxAgeHours: number = 24,
 ): Promise<Record<string, string>> {
   const org = await prisma.organization.findUnique({
     where: { id: organizationId },

@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Clock, History } from "lucide-react";
 import { toggleUserClockStatus } from "@/actions/clock";
 import { toast } from "sonner";
@@ -30,18 +36,22 @@ export function ClockStatusWidget({ initialStatus }: ClockStatusWidgetProps) {
       toast.success(
         result.isClockedIn
           ? "You've clocked in! Your schedules are now active."
-          : "You've clocked out! Your schedules are paused."
+          : "You've clocked out! Your schedules are paused.",
       );
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to toggle clock status"
+        error instanceof Error
+          ? error.message
+          : "Failed to toggle clock status",
       );
     } finally {
       setToggling(false);
     }
   };
 
-  const lastChange = isClockedIn ? initialStatus.lastClockIn : initialStatus.lastClockOut;
+  const lastChange = isClockedIn
+    ? initialStatus.lastClockIn
+    : initialStatus.lastClockOut;
   const timeAgo = lastChange ? getTimeAgo(new Date(lastChange)) : null;
 
   return (
@@ -67,7 +77,9 @@ export function ClockStatusWidget({ initialStatus }: ClockStatusWidgetProps) {
                 )}
               </CardDescription>
             </div>
-            <Clock className={`h-5 w-5 ${isClockedIn ? "text-green-600" : "text-gray-400"}`} />
+            <Clock
+              className={`h-5 w-5 ${isClockedIn ? "text-green-600" : "text-gray-400"}`}
+            />
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -84,7 +96,11 @@ export function ClockStatusWidget({ initialStatus }: ClockStatusWidgetProps) {
               className="flex-1"
               variant={isClockedIn ? "outline" : "default"}
             >
-              {toggling ? "Updating..." : isClockedIn ? "Clock Out" : "Clock In"}
+              {toggling
+                ? "Updating..."
+                : isClockedIn
+                  ? "Clock Out"
+                  : "Clock In"}
             </Button>
 
             <Button

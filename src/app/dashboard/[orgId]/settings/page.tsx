@@ -49,9 +49,11 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
         id: membership.organization.clockConfig.id,
         channelId: membership.organization.clockConfig.channelId,
         channelName: membership.organization.clockConfig.channelName,
-        clockInKeywords: membership.organization.clockConfig.clockInKeywords as string[],
+        clockInKeywords: membership.organization.clockConfig
+          .clockInKeywords as string[],
         clockInEmoji: membership.organization.clockConfig.clockInEmoji,
-        clockOutKeywords: membership.organization.clockConfig.clockOutKeywords as string[],
+        clockOutKeywords: membership.organization.clockConfig
+          .clockOutKeywords as string[],
         clockOutEmoji: membership.organization.clockConfig.clockOutEmoji,
         enabled: membership.organization.clockConfig.enabled,
       }
@@ -81,10 +83,7 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
             </p>
           </div>
         ) : (
-          <ClockConfigForm
-            organizationId={orgId}
-            initialConfig={clockConfig}
-          />
+          <ClockConfigForm organizationId={orgId} initialConfig={clockConfig} />
         )}
       </div>
     </div>

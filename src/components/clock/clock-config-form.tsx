@@ -1,9 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { getOrganizationChannels, updateClockConfig } from "@/actions/clock";
 import { toast } from "sonner";
 import { EmojiPicker } from "../schedules/emoji-picker";
@@ -24,17 +36,26 @@ interface ClockConfigFormProps {
   initialConfig: ClockConfig | null;
 }
 
-export function ClockConfigForm({ organizationId, initialConfig }: ClockConfigFormProps) {
-  const [channels, setChannels] = useState<Array<{ id: string; name: string }>>([]);
+export function ClockConfigForm({
+  organizationId,
+  initialConfig,
+}: ClockConfigFormProps) {
+  const [channels, setChannels] = useState<Array<{ id: string; name: string }>>(
+    [],
+  );
   const [loadingChannels, setLoadingChannels] = useState(true);
   const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     channelId: initialConfig?.channelId || "",
     channelName: initialConfig?.channelName || "",
-    clockInKeywords: initialConfig?.clockInKeywords.join(", ") || "gm, good morning, clocking in",
+    clockInKeywords:
+      initialConfig?.clockInKeywords.join(", ") ||
+      "gm, good morning, clocking in",
     clockInEmoji: initialConfig?.clockInEmoji || ":wave:",
-    clockOutKeywords: initialConfig?.clockOutKeywords.join(", ") || "gn, good night, clocking out",
+    clockOutKeywords:
+      initialConfig?.clockOutKeywords.join(", ") ||
+      "gn, good night, clocking out",
     clockOutEmoji: initialConfig?.clockOutEmoji || ":zzz:",
     enabled: initialConfig?.enabled ?? true,
   });
@@ -106,7 +127,9 @@ export function ClockConfigForm({ organizationId, initialConfig }: ClockConfigFo
 
       toast.success("Clock configuration saved successfully!");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save configuration");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to save configuration",
+      );
     } finally {
       setSaving(false);
     }
@@ -146,7 +169,9 @@ export function ClockConfigForm({ organizationId, initialConfig }: ClockConfigFo
                 type="checkbox"
                 className="sr-only peer"
                 checked={formData.enabled}
-                onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, enabled: e.target.checked })
+                }
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
             </label>
@@ -157,9 +182,16 @@ export function ClockConfigForm({ organizationId, initialConfig }: ClockConfigFo
             <label htmlFor="channel" className="block text-sm font-medium mb-2">
               Channel to Monitor
             </label>
-            <Select value={formData.channelId} onValueChange={handleChannelChange}>
+            <Select
+              value={formData.channelId}
+              onValueChange={handleChannelChange}
+            >
               <SelectTrigger>
-                <SelectValue placeholder={loadingChannels ? "Loading channels..." : "Select a channel"} />
+                <SelectValue
+                  placeholder={
+                    loadingChannels ? "Loading channels..." : "Select a channel"
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 {channels.map((channel) => (
@@ -176,14 +208,19 @@ export function ClockConfigForm({ organizationId, initialConfig }: ClockConfigFo
 
           {/* Clock-In Keywords */}
           <div>
-            <label htmlFor="clockInKeywords" className="block text-sm font-medium mb-2">
+            <label
+              htmlFor="clockInKeywords"
+              className="block text-sm font-medium mb-2"
+            >
               Clock-In Keywords
             </label>
             <input
               type="text"
               id="clockInKeywords"
               value={formData.clockInKeywords}
-              onChange={(e) => setFormData({ ...formData, clockInKeywords: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, clockInKeywords: e.target.value })
+              }
               className="block w-full rounded-md border border-gray-300 px-3 py-2"
               placeholder="gm, good morning, clocking in"
             />
@@ -194,17 +231,24 @@ export function ClockConfigForm({ organizationId, initialConfig }: ClockConfigFo
 
           {/* Clock-In Emoji */}
           <div>
-            <label htmlFor="clockInEmoji" className="block text-sm font-medium mb-2">
+            <label
+              htmlFor="clockInEmoji"
+              className="block text-sm font-medium mb-2"
+            >
               Clock-In Reaction Emoji
             </label>
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setShowClockInEmojiPicker(!showClockInEmojiPicker)}
+                onClick={() =>
+                  setShowClockInEmojiPicker(!showClockInEmojiPicker)
+                }
                 className="w-full flex items-center justify-between rounded-md border border-gray-300 px-3 py-2 text-left hover:border-gray-400"
               >
                 <span className="flex items-center gap-2">
-                  <span className="text-xl">{formData.clockInEmoji.replace(/:/g, "")}</span>
+                  <span className="text-xl">
+                    {formData.clockInEmoji.replace(/:/g, "")}
+                  </span>
                   <span>{formData.clockInEmoji}</span>
                 </span>
               </button>
@@ -229,14 +273,19 @@ export function ClockConfigForm({ organizationId, initialConfig }: ClockConfigFo
 
           {/* Clock-Out Keywords */}
           <div>
-            <label htmlFor="clockOutKeywords" className="block text-sm font-medium mb-2">
+            <label
+              htmlFor="clockOutKeywords"
+              className="block text-sm font-medium mb-2"
+            >
               Clock-Out Keywords
             </label>
             <input
               type="text"
               id="clockOutKeywords"
               value={formData.clockOutKeywords}
-              onChange={(e) => setFormData({ ...formData, clockOutKeywords: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, clockOutKeywords: e.target.value })
+              }
               className="block w-full rounded-md border border-gray-300 px-3 py-2"
               placeholder="gn, good night, clocking out"
             />
@@ -247,17 +296,24 @@ export function ClockConfigForm({ organizationId, initialConfig }: ClockConfigFo
 
           {/* Clock-Out Emoji */}
           <div>
-            <label htmlFor="clockOutEmoji" className="block text-sm font-medium mb-2">
+            <label
+              htmlFor="clockOutEmoji"
+              className="block text-sm font-medium mb-2"
+            >
               Clock-Out Reaction Emoji
             </label>
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setShowClockOutEmojiPicker(!showClockOutEmojiPicker)}
+                onClick={() =>
+                  setShowClockOutEmojiPicker(!showClockOutEmojiPicker)
+                }
                 className="w-full flex items-center justify-between rounded-md border border-gray-300 px-3 py-2 text-left hover:border-gray-400"
               >
                 <span className="flex items-center gap-2">
-                  <span className="text-xl">{formData.clockOutEmoji.replace(/:/g, "")}</span>
+                  <span className="text-xl">
+                    {formData.clockOutEmoji.replace(/:/g, "")}
+                  </span>
                   <span>{formData.clockOutEmoji}</span>
                 </span>
               </button>

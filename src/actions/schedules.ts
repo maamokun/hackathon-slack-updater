@@ -75,7 +75,9 @@ export async function createSchedule(input: CreateScheduleInput) {
     }
 
     if (input.recurringDays.some((day) => day < 0 || day > 6)) {
-      throw new Error("Invalid recurring day: must be between 0 (Sunday) and 6 (Saturday)");
+      throw new Error(
+        "Invalid recurring day: must be between 0 (Sunday) and 6 (Saturday)",
+      );
     }
   }
 
@@ -132,11 +134,17 @@ export async function updateSchedule(input: UpdateScheduleInput) {
   await verifyMembership(schedule.organizationId);
 
   // Validate time ranges if provided
-  if (input.timeStart !== undefined && (input.timeStart < 0 || input.timeStart > 1439)) {
+  if (
+    input.timeStart !== undefined &&
+    (input.timeStart < 0 || input.timeStart > 1439)
+  ) {
     throw new Error("Invalid timeStart: must be between 0 and 1439");
   }
 
-  if (input.timeEnd !== undefined && (input.timeEnd < 0 || input.timeEnd > 1439)) {
+  if (
+    input.timeEnd !== undefined &&
+    (input.timeEnd < 0 || input.timeEnd > 1439)
+  ) {
     throw new Error("Invalid timeEnd: must be between 0 and 1439");
   }
 
@@ -157,10 +165,16 @@ export async function updateSchedule(input: UpdateScheduleInput) {
       ...(input.timeEnd !== undefined && { timeEnd: input.timeEnd }),
       ...(input.timezone !== undefined && { timezone: input.timezone }),
       ...(input.statusText !== undefined && { statusText: input.statusText }),
-      ...(input.statusEmoji !== undefined && { statusEmoji: input.statusEmoji }),
+      ...(input.statusEmoji !== undefined && {
+        statusEmoji: input.statusEmoji,
+      }),
       ...(input.recurring !== undefined && { recurring: input.recurring }),
-      ...(input.recurringDays !== undefined && { recurringDays: input.recurringDays }),
-      ...(input.requiresClockedIn !== undefined && { requiresClockedIn: input.requiresClockedIn }),
+      ...(input.recurringDays !== undefined && {
+        recurringDays: input.recurringDays,
+      }),
+      ...(input.requiresClockedIn !== undefined && {
+        requiresClockedIn: input.requiresClockedIn,
+      }),
       ...(input.enabled !== undefined && { enabled: input.enabled }),
     },
   });
@@ -280,7 +294,9 @@ export async function removeOrganizationMember(memberId: string) {
   });
 
   if (!currentUserMembership || currentUserMembership.role !== "owner") {
-    throw new Error("Unauthorized: Only organization owners can remove members");
+    throw new Error(
+      "Unauthorized: Only organization owners can remove members",
+    );
   }
 
   // Don't allow removing the last owner

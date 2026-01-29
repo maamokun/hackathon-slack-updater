@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { getUserClockHistory } from "@/actions/clock";
 import { Clock, MessageSquare, Hand, Terminal } from "lucide-react";
 
@@ -68,18 +73,20 @@ export function ClockHistoryModal({ isOpen, onClose }: ClockHistoryModalProps) {
                   key={event.id}
                   className="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50"
                 >
-                  <div className="mt-0.5">
-                    {getMethodIcon(event.method)}
-                  </div>
+                  <div className="mt-0.5">{getMethodIcon(event.method)}</div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className={`font-medium ${
-                        event.action === "clock_in"
-                          ? "text-green-700"
-                          : "text-gray-700"
-                      }`}>
-                        {event.action === "clock_in" ? "Clocked In" : "Clocked Out"}
+                      <span
+                        className={`font-medium ${
+                          event.action === "clock_in"
+                            ? "text-green-700"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        {event.action === "clock_in"
+                          ? "Clocked In"
+                          : "Clocked Out"}
                       </span>
                       <span className="text-xs text-gray-500">
                         via {getMethodLabel(event.method)}
@@ -91,11 +98,13 @@ export function ClockHistoryModal({ isOpen, onClose }: ClockHistoryModalProps) {
                     </div>
                   </div>
 
-                  <div className={`px-2 py-1 rounded text-xs font-medium ${
-                    event.action === "clock_in"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-gray-100 text-gray-700"
-                  }`}>
+                  <div
+                    className={`px-2 py-1 rounded text-xs font-medium ${
+                      event.action === "clock_in"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
                     {event.action === "clock_in" ? "In" : "Out"}
                   </div>
                 </div>

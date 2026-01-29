@@ -55,7 +55,9 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    console.log(`[Cron] Found ${activeSchedules.length} potentially active schedules`);
+    console.log(
+      `[Cron] Found ${activeSchedules.length} potentially active schedules`,
+    );
 
     // Filter schedules by time and recurrence pattern
     const filteredSchedules: ActiveSchedule[] = [];
@@ -65,7 +67,7 @@ export async function GET(request: NextRequest) {
       const isInTimeRange = isTimeInRange(
         currentMinutes,
         schedule.timeStart,
-        schedule.timeEnd
+        schedule.timeEnd,
       );
 
       if (!isInTimeRange) {
@@ -76,7 +78,7 @@ export async function GET(request: NextRequest) {
       const matchesRecurrence = matchesRecurrencePattern(
         currentDayOfWeek,
         schedule.recurring,
-        schedule.recurringDays as number[] | null
+        schedule.recurringDays as number[] | null,
       );
 
       if (!matchesRecurrence) {
@@ -96,10 +98,12 @@ export async function GET(request: NextRequest) {
 
       // Get the organization membership for this user
       const membership = schedule.organization.members.find(
-        (member) => member.userId === schedule.userId
+        (member) => member.userId === schedule.userId,
       );
       if (!membership) {
-        console.warn(`[Cron] No membership found for user ${schedule.userId} in org ${schedule.organizationId}`);
+        console.warn(
+          `[Cron] No membership found for user ${schedule.userId} in org ${schedule.organizationId}`,
+        );
         continue;
       }
 
@@ -116,7 +120,9 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    console.log(`[Cron] ${filteredSchedules.length} schedules are currently active`);
+    console.log(
+      `[Cron] ${filteredSchedules.length} schedules are currently active`,
+    );
 
     // Group by user and pick highest priority schedule for each user
     const schedulesByUser = new Map<string, ActiveSchedule>();
@@ -142,19 +148,25 @@ export async function GET(request: NextRequest) {
         await updateUserSlackStatus(
           schedule.membershipId,
           schedule.statusText,
-          schedule.statusEmoji
+          schedule.statusEmoji,
         );
         results.success++;
         console.log(`[Cron] ✓ Updated status for user ${userId}`);
       } catch (error) {
         results.failed++;
-        const errorMsg = error instanceof Error ? error.message : "Unknown error";
+        const errorMsg =
+          error instanceof Error ? error.message : "Unknown error";
         results.errors.push(`User ${userId}: ${errorMsg}`);
-        console.error(`[Cron] ✗ Failed to update status for user ${userId}:`, error);
+        console.error(
+          `[Cron] ✗ Failed to update status for user ${userId}:`,
+          error,
+        );
       }
     }
 
-    console.log(`[Cron] Completed: ${results.success} success, ${results.failed} failed`);
+    console.log(
+      `[Cron] Completed: ${results.success} success, ${results.failed} failed`,
+    );
 
     return NextResponse.json({
       success: true,
@@ -174,7 +186,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -186,7 +198,7 @@ export async function GET(request: NextRequest) {
 function isTimeInRange(
   currentMinutes: number,
   startMinutes: number,
-  endMinutes: number
+  endMinutes: number,
 ): boolean {
   if (startMinutes <= endMinutes) {
     // Normal range (doesn't cross midnight)
@@ -203,7 +215,7 @@ function isTimeInRange(
 function matchesRecurrencePattern(
   currentDay: number,
   recurring: string,
-  recurringDays: number[] | null
+  recurringDays: number[] | null,
 ): boolean {
   switch (recurring) {
     case "none":

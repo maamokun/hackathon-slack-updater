@@ -220,22 +220,21 @@ export function EmojiPicker({
     const emojis = EMOJI_CATEGORIES[category].emojis;
     if (!searchQuery) return emojis;
     return emojis.filter((e) =>
-      e.name.toLowerCase().includes(searchQuery.toLowerCase())
+      e.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   };
 
   const filteredCustomEmojis = Object.entries(customEmojis).filter(([name]) =>
-    name.toLowerCase().includes(searchQuery.toLowerCase())
+    name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Get all matching emojis across categories for search
   const searchResults = searchQuery
-    ? Object.entries(EMOJI_CATEGORIES)
-        .flatMap(([key, cat]) =>
-          cat.emojis.filter((e) =>
-            e.name.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        )
+    ? Object.entries(EMOJI_CATEGORIES).flatMap(([key, cat]) =>
+        cat.emojis.filter((e) =>
+          e.name.toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
+      )
     : [];
 
   return (
@@ -253,15 +252,20 @@ export function EmojiPicker({
       </div>
 
       {/* Emoji Grid */}
-      <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
+      <Tabs
+        value={activeCategory}
+        onValueChange={setActiveCategory}
+        className="w-full"
+      >
         <TabsList variant="line" className="w-full justify-start px-3 border-b">
-          {Object.entries(EMOJI_CATEGORIES).map(([key, cat]) => (
-            key !== "recent" && (
-              <TabsTrigger key={key} value={key} className="text-xl">
-                {cat.icon}
-              </TabsTrigger>
-            )
-          ))}
+          {Object.entries(EMOJI_CATEGORIES).map(
+            ([key, cat]) =>
+              key !== "recent" && (
+                <TabsTrigger key={key} value={key} className="text-xl">
+                  {cat.icon}
+                </TabsTrigger>
+              ),
+          )}
           <TabsTrigger value="custom" className="text-xl">
             🎨
           </TabsTrigger>
@@ -303,35 +307,37 @@ export function EmojiPicker({
                   </button>
                 ))}
               </div>
-              {searchResults.length === 0 && filteredCustomEmojis.length === 0 && (
-                <div className="text-center py-8 text-gray-500 text-sm">
-                  No emojis found
-                </div>
-              )}
+              {searchResults.length === 0 &&
+                filteredCustomEmojis.length === 0 && (
+                  <div className="text-center py-8 text-gray-500 text-sm">
+                    No emojis found
+                  </div>
+                )}
             </div>
           ) : (
             <>
-              {Object.entries(EMOJI_CATEGORIES).map(([key, cat]) => (
-                key !== "recent" && (
-                  <TabsContent key={key} value={key} className="p-3 mt-0">
-                    <div className="text-xs font-semibold text-gray-500 mb-2">
-                      {cat.label}
-                    </div>
-                    <div className="grid grid-cols-8 gap-1">
-                      {cat.emojis.map((item) => (
-                        <button
-                          key={item.name}
-                          onClick={() => handleSelect(item.name)}
-                          className="p-2 text-2xl hover:bg-gray-100 rounded-md transition-colors"
-                          title={item.name}
-                        >
-                          {item.emoji}
-                        </button>
-                      ))}
-                    </div>
-                  </TabsContent>
-                )
-              ))}
+              {Object.entries(EMOJI_CATEGORIES).map(
+                ([key, cat]) =>
+                  key !== "recent" && (
+                    <TabsContent key={key} value={key} className="p-3 mt-0">
+                      <div className="text-xs font-semibold text-gray-500 mb-2">
+                        {cat.label}
+                      </div>
+                      <div className="grid grid-cols-8 gap-1">
+                        {cat.emojis.map((item) => (
+                          <button
+                            key={item.name}
+                            onClick={() => handleSelect(item.name)}
+                            className="p-2 text-2xl hover:bg-gray-100 rounded-md transition-colors"
+                            title={item.name}
+                          >
+                            {item.emoji}
+                          </button>
+                        ))}
+                      </div>
+                    </TabsContent>
+                  ),
+              )}
 
               <TabsContent value="custom" className="p-3 mt-0">
                 <div className="text-xs font-semibold text-gray-500 mb-2">
@@ -378,7 +384,8 @@ export function EmojiPicker({
       {/* Footer */}
       <div className="p-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
         <p className="text-xs text-gray-600">
-          Selected: <span className="font-mono font-semibold">{value || "None"}</span>
+          Selected:{" "}
+          <span className="font-mono font-semibold">{value || "None"}</span>
         </p>
       </div>
     </div>

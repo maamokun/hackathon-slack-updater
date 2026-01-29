@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
   // User scopes for the installing user
   const userScopes = [
     "users.profile:write", // Update user's own status
+    "users:write",         // Set user's presence (online/away)
     "emoji:read",          // Read workspace custom emojis as the user
   ].join(",");
 

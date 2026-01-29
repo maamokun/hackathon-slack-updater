@@ -60,9 +60,11 @@ export async function updateClockStatus(
       try {
         await setUserPresence(membership.id, "away");
       } catch (error) {
-        console.error(
-          `Failed to set presence for membership ${membership.id}:`,
-          error
+        // Log warning but don't block clock-out operation
+        console.warn(
+          `Could not update presence for membership ${membership.id}:`,
+          error instanceof Error ? error.message : "Unknown error",
+          "- User may need to reinstall app with users:write scope"
         );
       }
     }
@@ -76,9 +78,11 @@ export async function updateClockStatus(
       try {
         await setUserPresence(membership.id, "auto");
       } catch (error) {
-        console.error(
-          `Failed to set presence for membership ${membership.id}:`,
-          error
+        // Log warning but don't block clock-in operation
+        console.warn(
+          `Could not update presence for membership ${membership.id}:`,
+          error instanceof Error ? error.message : "Unknown error",
+          "- User may need to reinstall app with users:write scope"
         );
       }
     }

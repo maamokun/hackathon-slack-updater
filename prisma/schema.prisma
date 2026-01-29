@@ -1,0 +1,244 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                     String               @id
+  name                   String
+  email                  String
+  emailVerified          Boolean              @default(false)
+  image                  String?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  sessions               Session[]
+  accounts               Account[]
+  organizationMemberships OrganizationMember[]
+  schedules              Schedule[]
+  installedOrganizations Organization[]       @relation("InstalledBy")
+  clockStatus            ClockStatus?
+  clockEvents            ClockEvent[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model Organization {
+  id                 String               @id @default(cuid())
+  slackTeamId        String               @unique
+  slackTeamName      String
+
+  // Bot tokens (encrypted with AES-256-GCM)
+  botAccessToken     String               @db.Text
+  botRefreshToken    String               @db.Text
+  botTokenExpiresAt  DateTime
+
+  installedBy        String
+  installedByUser    User                 @relation("InstalledBy", fields: [installedBy], references: [id])
+
+  // Cached custom emojis (JSON)
+  customEmojis       Json?
+  emojisLastFetched  DateTime?
+
+  members            OrganizationMember[]
+  schedules          Schedule[]
+  clockConfig        ClockConfig?
+
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  @@map("organization")
+}
+
+model OrganizationMember {
+  id                 String       @id @default(cuid())
+  organizationId     String
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId             String
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  slackUserId        String
+
+  // User's Slack tokens (encrypted with AES-256-GCM)
+  userAccessToken    String       @db.Text
+  userRefreshToken   String       @db.Text
+  userTokenExpiresAt DateTime
+
+  role               String       @default("member") // "owner" | "member"
+
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("organization_member")
+}
+
+model Schedule {
+  id               String       @id @default(cuid())
+  userId           String
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  // Schedule details
+  name             String       // User-friendly name for the schedule
+  startDate        DateTime     // Stored in UTC
+  endDate          DateTime?    // Optional, null = indefinite, stored in UTC
+
+  // Time slots (stored as minutes from midnight in UTC)
+  timeStart        Int          // 0-1439 (minutes from midnight)
+  timeEnd          Int          // 0-1439 (minutes from midnight)
+
+  // User's timezone for display
+  timezone         String       @default("UTC") // IANA timezone
+
+  // Status configuration
+  statusText       String
+  statusEmoji      String       // Format: ":emoji_name:"
+
+  // Recurrence
+  recurring        String       @default("none") // "none" | "daily" | "weekdays" | "weekends" | "custom"
+  recurringDays    Json?        // [0,1,2,3,4,5,6] for custom (0=Sunday)
+
+  // Clock-in requirement
+  requiresClockedIn Boolean     @default(false) // Only activate when user is clocked in
+
+  enabled          Boolean      @default(true)
+
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([startDate, endDate])
+  @@map("schedule")
+}
+
+model ClockConfig {
+  id               String       @id @default(cuid())
+  organizationId   String       @unique
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  // Channel to monitor
+  channelId        String       // Slack channel ID
+  channelName      String       // For display purposes
+
+  // Clock-in configuration
+  clockInKeywords  Json         // Array of strings (e.g., ["gm", "good morning", "clocking in"])
+  clockInEmoji     String       // Emoji to react with (e.g., ":wave:")
+
+  // Clock-out configuration
+  clockOutKeywords Json         // Array of strings (e.g., ["gn", "good night", "clocking out"])
+  clockOutEmoji    String       // Emoji to react with (e.g., ":zzz:")
+
+  enabled          Boolean      @default(true)
+
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@map("clock_config")
+}
+
+model ClockStatus {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  isClockedIn   Boolean   @default(false)
+  lastClockIn   DateTime?
+  lastClockOut  DateTime?
+  lastUpdatedBy String    // "message" | "manual" | "slash_command"
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("clock_status")
+}
+
+model ClockEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  action    String   // "clock_in" | "clock_out"
+  method    String   // "message" | "manual" | "slash_command"
+  timestamp DateTime @default(now())
+
+  // For message-based events
+  messageTs String?
+  channelId String?
+
+  @@index([userId])
+  @@index([timestamp])
+  @@map("clock_event")
+}
+
+model DmOptOut {
+  id             String   @id @default(cuid())
+  slackUserId    String
+  organizationId String
+  createdAt      DateTime @default(now())
+
+  @@unique([slackUserId, organizationId])
+  @@index([slackUserId])
+  @@map("dm_opt_out")
+}

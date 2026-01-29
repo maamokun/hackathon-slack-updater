@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/update-statuses",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/refresh-emojis",
+      "schedule": "0 */6 * * *"
+    }
+  ]
+}

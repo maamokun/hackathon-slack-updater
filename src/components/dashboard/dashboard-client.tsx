@@ -5,11 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusIcon, CalendarIcon, Settings } from "lucide-react";
+import { PlusIcon, CalendarIcon, Settings, LogOut } from "lucide-react";
 import { ScheduleForm } from "@/components/schedules/schedule-form";
 import { ScheduleList } from "@/components/schedules/schedule-list";
 import { getSchedules } from "@/actions/schedules";
 import { ClockStatusWidget } from "@/components/clock/clock-status-widget";
+import { authClient } from "@/lib/auth-client";
 
 interface Organization {
   id: string;
@@ -78,15 +79,35 @@ export function DashboardClient({ user, organizations, clockStatus }: DashboardC
     setDialogOpen(true);
   };
 
+  const handleLogout = async () => {
+    try {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            window.location.href = "/";
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Failed to logout:", error);
+    }
+  };
+
   const selectedOrg = organizations.find((org) => org.id === selectedOrgId);
 
   if (organizations.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 p-8">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold">Dashboard</h1>
-            <p className="text-gray-600 mt-2">Manage your Slack status schedules</p>
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Dashboard</h1>
+              <p className="text-gray-600 mt-2">Manage your Slack status schedules</p>
+            </div>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
           </div>
 
           <Card>
@@ -157,6 +178,11 @@ export function DashboardClient({ user, organizations, clockStatus }: DashboardC
                   <PlusIcon className="mr-2 h-4 w-4" />
                   Add Workspace
                 </a>
+              </Button>
+
+              <Button variant="outline" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
               </Button>
             </div>
           </div>

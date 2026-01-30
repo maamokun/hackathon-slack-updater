@@ -1,7 +1,7 @@
 FROM oven/bun:1 AS deps
 WORKDIR /app
 
-ENV NEXT_PUBLIC_BASE_URL="https://hackathon-slack-updater-production.up.railway.app"
+ENV NEXT_PUBLIC_BASE_URL "https://hackathon-slack-updater-production.up.railway.app"
 
 COPY package.json bun.lockb* ./
 COPY prisma ./prisma/
